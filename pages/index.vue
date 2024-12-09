@@ -31,7 +31,7 @@ const handleUpdateSelectedEvent = (event: TimeEvent) => {
         <div class="flex items-center h-20">
           <h1 
             class="text-2xl font-serif text-warm-gray-800 whitespace-nowrap transition-colors duration-300 hover:text-warm-gray-600 mr-8">
-            小猫咪和大猫咪の树洞
+            小猫咪の树洞
           </h1>
           <div class="grow pt-6 pb-3">
             <Timeline
