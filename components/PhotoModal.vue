@@ -46,42 +46,55 @@ onUnmounted(() => {
         
         <!-- 弹层内容 -->
         <div class="flex min-h-screen items-center justify-center p-4">
-          <div class="relative w-full max-w-6xl rounded-lg bg-warm-gray-100 shadow-xl">
+          <div 
+            class="relative w-full rounded-lg overflow-hidden"
+            :class="[photo.story ? 'max-w-6xl bg-warm-gray-100' : 'max-w-4xl']"
+          >
             <div class="flex flex-col md:flex-row">
               <!-- 图片区域 -->
-              <div class="md:w-2/3">
+              <div :class="[photo.story ? 'md:w-2/3' : 'w-full']">
                 <div class="relative aspect-w-4 aspect-h-3">
                   <img
                     :src="photo.src"
                     :alt="photo.alt"
-                    class="rounded-t-lg md:rounded-l-lg md:rounded-tr-none object-cover"
+                    class="w-full h-full object-cover"
+                    :class="[photo.story ? 'md:rounded-l-lg' : 'rounded-lg']"
                   />
                 </div>
               </div>
               
-              <!-- 故事区域 -->
-              <div class="md:w-1/3 p-6">
+              <!-- 故事区域 - 仅在有故事时显示 -->
+              <div v-if="photo.story" class="md:w-1/3 p-6">
                 <div class="mb-4">
-                  <h3 class="text-xl font-medium text-warm-gray-800">
-                    {{ photo.year }}年{{ photo.season }}
-                  </h3>
-                  <p class="mt-2 text-warm-gray-600">
-                    {{ photo.story || '这张照片还没有故事...' }}
+                  <div class="flex items-center gap-2 mb-3">
+                    <h3 class="text-xl font-medium text-warm-gray-800">
+                      {{ photo.year }}年{{ photo.season }}
+                    </h3>
+                    <span class="text-warm-gray-500">·</span>
+                    <span class="text-warm-gray-600">{{ photo.location }}</span>
+                  </div>
+                  <p class="mt-2 text-warm-gray-600 leading-relaxed">
+                    {{ photo.story }}
                   </p>
                 </div>
-                
-                <!-- 关闭按钮 -->
-                <button
-                  class="absolute top-4 right-4 text-warm-gray-400 hover:text-warm-gray-600 transition-colors duration-200"
-                  @click="emit('close')"
-                >
-                  <span class="sr-only">关闭</span>
-                  <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
               </div>
             </div>
+            
+            <!-- 关闭按钮 -->
+            <button
+              class="absolute top-4 right-4 transition-colors duration-200 rounded-full p-1.5"
+              :class="[
+                photo.story 
+                  ? 'text-warm-gray-400 hover:text-warm-gray-600 bg-transparent' 
+                  : 'text-white hover:text-white/80 mix-blend-difference bg-white/10 backdrop-blur-sm'
+              ]"
+              @click="emit('close')"
+            >
+              <span class="sr-only">关闭</span>
+              <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
           </div>
         </div>
       </div>

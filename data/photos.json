@@ -1,0 +1,46 @@
+{
+  "photos": [
+    { 
+      "id": 1, 
+      "src": "https://picsum.photos/seed/spring2024/800/600", 
+      "year": 2024, 
+      "season": "春", 
+      "alt": "2024年春季风景 - 春暖花开",
+      "story": "那天阳光正好，樱花盛开。漫步在林间小道，一切都充满了生机。",
+      "location": "公园"
+    },
+    { 
+      "id": 2, 
+      "src": "https://picsum.photos/seed/spring2024-2/800/600", 
+      "year": 2024, 
+      "season": "春", 
+      "alt": "2024年春季风景 - 春日庭院",
+      "story": "在家里的小院子里种下了一些花草。",
+      "location": "家"
+    },
+    { 
+      "id": 3, 
+      "src": "https://picsum.photos/seed/summer2024/800/600", 
+      "year": 2024, 
+      "season": "夏", 
+      "alt": "2024年夏季风景 - 夏日海滩",
+      "location": "家"
+    },
+    { 
+      "id": 4, 
+      "src": "https://picsum.photos/seed/autumn2024/800/600", 
+      "year": 2024, 
+      "season": "秋", 
+      "alt": "2024年秋季风景 - 秋色宜人",
+      "location": "家"
+    },
+    { 
+      "id": 5, 
+      "src": "https://picsum.photos/seed/winter2024/800/600", 
+      "year": 2024, 
+      "season": "冬", 
+      "alt": "2024年冬季风景 - 冬雪纷飞",
+      "location": "家"
+    }
+  ]
+} 

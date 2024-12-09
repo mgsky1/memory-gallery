@@ -13,4 +13,5 @@ export type Photo = {
   season: Season
   alt: string
   story?: string
+  location: string
 } 

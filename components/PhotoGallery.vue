@@ -3,6 +3,7 @@ import { computed, ref, onMounted, watch, onUnmounted } from 'vue'
 import { useWindowSize, useScroll, useThrottleFn } from '@vueuse/core'
 import type { TimeEvent, Photo } from '~/types'
 import { timelineEvents } from '~/constants/timeline'
+import photosData from '~/data/photos.json'
 
 const { width } = useWindowSize()
 const { y: scrollY } = useScroll(window)
@@ -14,37 +15,8 @@ const sectionRefs = ref<Map<number, HTMLElement>>(new Map())
 const selectedPhoto = ref<Photo | null>(null)
 const isModalOpen = ref(false)
 
-const photos: Photo[] = [
-  { 
-    id: 1, 
-    src: 'https://picsum.photos/seed/spring2024/800/600', 
-    year: 2024, 
-    season: '春', 
-    alt: '2024年春季风景 - 春暖花开',
-    story: '那天阳光正好，樱花盛开。漫步在林间小道，一切都充满了生机。' 
-  },
-  { 
-    id: 2, 
-    src: 'https://picsum.photos/seed/summer2024/800/600', 
-    year: 2024, 
-    season: '夏', 
-    alt: '2024年夏季风景 - 夏日海滩' 
-  },
-  { 
-    id: 3, 
-    src: 'https://picsum.photos/seed/autumn2024/800/600', 
-    year: 2024, 
-    season: '秋', 
-    alt: '2024年秋季风景 - 秋色宜人' 
-  },
-  { 
-    id: 4, 
-    src: 'https://picsum.photos/seed/winter2024/800/600', 
-    year: 2024, 
-    season: '冬', 
-    alt: '2024年冬季风景 - 冬雪纷飞' 
-  }
-]
+// 使用导入的照片数据
+const photos = photosData.photos as Photo[]
 
 const props = defineProps<{
   selectedEvent: TimeEvent | null
@@ -94,6 +66,18 @@ const groupedPhotos = computed(() => {
   
   return groups
 })
+
+// 添加按地点分组的计算属性
+const groupPhotosByLocation = (photos: Photo[]) => {
+  const groups = new Map<string, Photo[]>()
+  photos.forEach(photo => {
+    if (!groups.has(photo.location)) {
+      groups.set(photo.location, [])
+    }
+    groups.get(photo.location)!.push(photo)
+  })
+  return groups
+}
 
 // 监听滚动，更新选中的时间节点
 const updateSelectedEventOnScroll = () => {
@@ -155,35 +139,50 @@ onUnmounted(() => {
         :data-section-id="event.id"
         :class="event.id === 1 ? 'relative pt-20' : 'relative'"
       >
-        <!-- 时间标题 - 移除了分割线，保留标题 -->
+        <!-- 时间标题 -->
         <div class="mb-6">
           <h2 class="text-xl font-medium text-warm-gray-800">
             {{ event.year }}年{{ event.season }}
           </h2>
         </div>
 
-        <!-- 照片网格 -->
-        <div class="grid gap-4" :style="{ 
-          gridTemplateColumns: `repeat(auto-fill, minmax(${gridColumns}, 1fr))`
-        }">
-          <div
-            v-for="photo in groupedPhotos.get(`${event.year}-${event.season}`)"
-            :key="photo.id"
-            class="bg-white rounded-lg shadow-md overflow-hidden mb-4 transition-all duration-300 hover:shadow-xl cursor-pointer"
-            @click="openPhotoDetail(photo)"
+        <!-- 按地点分组展示照片 -->
+        <div class="space-y-8">
+          <template 
+            v-for="[location, locationPhotos] in groupPhotosByLocation(
+              groupedPhotos.get(`${event.year}-${event.season}`) || []
+            )"
+            :key="location"
           >
-            <div class="aspect-w-4 aspect-h-3 relative">
-              <img
-                :src="photo.src"
-                :alt="photo.alt"
-                class="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                loading="lazy"
-              />
+            <!-- 地点标题 -->
+            <div class="flex items-center gap-2 mb-4">
+              <svg class="w-5 h-5 text-warm-gray-600" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+              </svg>
+              <h3 class="text-lg font-medium text-warm-gray-700">{{ location }}</h3>
             </div>
-            <div class="p-4">
-              <p class="text-sm text-warm-gray-600">{{ photo.year }}年{{ photo.season }}</p>
+
+            <!-- 照片网格 -->
+            <div class="grid gap-4" :style="{ 
+              gridTemplateColumns: `repeat(auto-fill, minmax(${gridColumns}, 1fr))`
+            }">
+              <div
+                v-for="photo in locationPhotos"
+                :key="photo.id"
+                class="bg-white rounded-lg shadow-md overflow-hidden mb-4 transition-all duration-300 hover:shadow-xl cursor-pointer"
+                @click="openPhotoDetail(photo)"
+              >
+                <div class="aspect-w-4 aspect-h-3 relative">
+                  <img
+                    :src="photo.src"
+                    :alt="photo.alt"
+                    class="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                    loading="lazy"
+                  />
+                </div>
+              </div>
             </div>
-          </div>
+          </template>
         </div>
       </section>
     </template>
